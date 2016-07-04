@@ -39,7 +39,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <app-route route="{{route}}" pattern="/:tabName" data="{{routeData}}"></app-route>
 
     <paper-tabs selected='{{routeData.tabName}}' attr-for-selected="name">
-      <paper-tab name="builds">Builds</paper-tab>
+      <paper-tab name="">Builds</paper-tab>
       <paper-tab name="badges">Badges</paper-tab>
       <paper-tab name="settings">Settings</paper-tab>
     </paper-tabs>
@@ -48,7 +48,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                          exit-animation="fade-out-animation"
                          duration="10000"
                          attr-for-selected="name">
-      <neon-animatable name="builds">
+      <neon-animatable name="">
         <drone-build-list repo="[[repo]]"></drone-build-list>
       </neon-animatable>
       <neon-animatable name="badges">Badges page</neon-animatable>

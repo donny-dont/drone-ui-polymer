@@ -21,7 +21,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/iron-selector/iron-selector.html">
 <link rel="import" href="drone-api.html">
 <link rel="import" href="my-icons.html">
-<link rel="import" href="my-repo.html">
 
 <dom-module id="my-app">
 
@@ -68,7 +67,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <app-location route="{{route}}"></app-location>
     <app-route
         route="{{route}}"
-        pattern="/:repo/:owner"
+        pattern="/:owner/:name"
         active="{{repoActive}}"
         data="{{repoData}}"
         tail="{{buildRoute}}"></app-route>
@@ -110,8 +109,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         <iron-pages role="main" selected="[[page]]" attr-for-selected="name">
           <drone-account-view name="account" route="{{accountRoute}}"></drone-account-view>
-          <drone-build-view name="build" route="{{buildRoute}}"></drone-build-view>
-          <drone-repo-view name="repo" route="{{buildRoute}}" data="[[repoData]]"></drone-repo-view>
+          <drone-build-view name="build" route="{{buildRoute}}" repo="{{repoData}}"></drone-build-view>
+          <drone-repo-view name="repo" route="{{buildRoute}}" repo="[[repoData]]"></drone-repo-view>
         </iron-pages>
       </app-header-layout>
     </app-drawer-layout>
