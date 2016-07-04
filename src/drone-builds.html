@@ -1,0 +1,79 @@
+<!--
+@license
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="drone-api.html">
+
+<dom-module id="drone-builds">
+  <template>
+    <style>
+      :host { display: none; }
+    </style>
+  </template>
+  <script>
+    Polymer({
+      is: 'drone-builds',
+      properties: {
+        name: {
+          type: String
+        },
+        owner: {
+          type: String
+        },
+        models: {
+          type: Array,
+          notify: true,
+          value: []
+        }
+      },
+      observers: [
+        'subscribe(repo, owner)'
+      ],
+      subscribe: function(repo, owner) {
+        console.log(repo);
+        console.log(owner);
+      },
+      attached: function() {
+        if (!this._drone) {
+          this._drone = new Drone();
+          this._drone.connect();
+        }
+
+        if (this._subscription) {
+          this._subscription.dispose();
+        }
+
+        var that = this;
+        this._subscription = this._drone.getBuilds(this.owner, this.name).subscribe(
+          function (value) {
+            console.log(value.id);
+            // See if the build is present
+            var models = that.models;
+            var count = models.length;
+            var id = value.id;
+
+            for (var i = 0; i < count; ++i) {
+              if (models[i].id === id) {
+                console.log('Updating model at ' + i);
+                that.set('models.' + i, value);
+                return;
+              }
+            }
+
+            that.unshift('models', value);
+          },
+          function (error) {
+
+          }
+        )
+      }
+    })
+  </script>
+</dom-module>

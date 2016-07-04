@@ -1,0 +1,80 @@
+<!--
+@license
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../bower_components/neon-animation/neon-animated-pages.html">
+<link rel="import" href="../bower_components/neon-animation/neon-animatable.html">
+<link rel="import" href="../bower_components/neon-animation/animations/fade-in-animation.html">
+<link rel="import" href="../bower_components/neon-animation/animations/fade-out-animation.html">
+<link rel="import" href="../bower_components/paper-tabs/paper-tab.html">
+<link rel="import" href="../bower_components/paper-tabs/paper-tabs.html">
+
+<link rel="import" href="drone-build-list.html">
+
+<dom-module id="my-repo">
+  <template>
+    <style>
+      :host {
+        @apply(--layout-vertical);
+        @apply(--layout-flex);
+      }
+
+      neon-animated-pages {
+        @apply(--layout-flex);
+      }
+
+      neon-animatable {
+        padding: 40px 30px;
+      }
+    </style>
+    <app-route route="{{route}}" pattern="/:tabName" data="{{routeData}}"></app-route>
+    <paper-tabs selected='{{routeData.tabName}}' attr-for-selected="name">
+      <paper-tab name="builds">Builds</paper-tab>
+      <paper-tab name="badges">Badges</paper-tab>
+      <paper-tab name="settings">Settings</paper-tab>
+    </paper-tabs>
+    <neon-animated-pages selected="[[routeData.tabName]]"
+                         entry-animation="fade-in-animation"
+                         exit-animation="fade-out-animation"
+                         duration="10000"
+                         attr-for-selected="name">
+      <neon-animatable name="builds">
+        <drone-builds owner="drone" name="drone" models="{{builds}}"></drone-builds>
+        <iron-list id="builds" items='[[builds]]' as="build">
+          <template>
+            <a href="">
+              <drone-build-card model="[[build]]"></drone-build-card>
+            </a>
+          </template>
+        </iron-list>
+      </neon-animatable>
+      <neon-animatable name="badges">Badges page</neon-animatable>
+      <neon-animatable name="settings">Settings page</neon-animatable>
+    </neon-animated-pages>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'my-repo',
+      properties: {
+        route: {
+          type: Object,
+          notify: true
+        },
+        repo: {
+          type: Object,
+          notify: true
+        },
+      }
+    });
+  </script>
+</dom-module>

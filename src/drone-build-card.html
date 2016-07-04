@@ -1,0 +1,123 @@
+<!--
+@license
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
+
+<link rel="import" href="drone-build-status.html">
+
+<dom-module id="drone-build-card">
+  <template>
+    <style>
+      :host {
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+        height: 150px;
+      }
+
+      img {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+      }
+
+      #info {
+        @apply(--layout-vertical);
+        @apply(--layout-flex);
+        padding: 0 20px;
+      }
+
+      #number::before {
+        display: inline-flex;
+        content: '#';
+      }
+    </style>
+    <img src$="[[model.author_avatar]]">
+    <div id="info">
+      <div id="message">[[model.message]]</div>
+
+      <!-- push description -->
+      <template is="dom-if" if="[[isPush]]">
+        <div class="description">
+          <em>[[model.author]]</em>
+          <span>pushed to</span>
+          <em>[[model.branch]]</em>
+        </div>
+      </template>
+
+      <!-- pull_request description -->
+      <template is="dom-if" if="[[isPull]]">
+        <div class="description">
+          <em>[[model.author]]</em>
+          <span>opened pull request to</span>
+          <em>[[model.branch]]</em>
+        </div>
+      </template>
+
+      <!-- tag description -->
+      <template is="dom-if" if="[[isTag]]">
+        <div class="description">
+          <em>[[model.author]]</em>
+          <span>pushed tag</span>
+          <em>[[model.ref]]</em>
+        </div>
+      </template>
+
+      <!-- deployment description -->
+      <template is="dom-if" if="[[isDeploy]]">
+        <div class="description">
+          <em>[[model.author]]</em>
+          <span>deployed to</span>
+          <em>[[model.deploy_to]]</em>
+        </div>
+      </template>
+    </div>
+    <div id="number">[[model.number]]</div>
+    <drone-build-status status="[[model.status]]"></drone-build-status>
+  </template>
+
+  <script>
+		Polymer({
+			is: "drone-build-card",
+			properties: {
+				model: {
+					type: Object
+				},
+        isPush: {
+          type: Boolean,
+          computed: 'computeIsPush(model)'
+        },
+        isPull: {
+          type: Boolean,
+          computed: 'computeIsPull(model)'
+        },
+        isTag: {
+          type: Boolean,
+          computed: 'computeIsTag(model)'
+        },
+        isDeploy: {
+          type: Boolean,
+          computed: 'computeIsDeploy(model)'
+        }
+			},
+			computeIsPush: function(value) {
+				return value.event === "push";
+			},
+			computeIsPull: function(value) {
+				return value.event === "pull_request";
+			},
+			computeIsTag: function(value) {
+				return value.event === "tag";
+			},
+			computeIsDeploy: function(value) {
+				return value.event === "deployment";
+			}
+		});
+	</script>
+</dom-module>
