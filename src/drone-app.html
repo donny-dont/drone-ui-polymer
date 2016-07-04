@@ -64,23 +64,37 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     </style>
 
+    <!-- Routing -->
     <app-location route="{{route}}"></app-location>
     <app-route
         route="{{route}}"
-        pattern="/:page"
-        data="{{routeData}}"
-        tail="{{subroute}}"></app-route>
+        pattern="/:repo/:owner"
+        active="{{repoActive}}"
+        data="{{repoData}}"
+        tail="{{buildRoute}}"></app-route>
+    <app-route
+        route="{{buildRoute}}"
+        pattern="/:number/:job"
+        active="{{buildActive}}"
+        data="{{buildData}}"></app-route>
+    <app-route
+        route="{{route}}"
+        pattern="/account"
+        active="{{accountActive}}"
+        data="{{accountData}}"
+        tail="{{accountRoute}}"></app-route>
 
+    <!-- Application shell -->
     <app-drawer-layout fullbleed>
-
       <!-- Drawer content -->
       <app-drawer>
         <app-toolbar>Menu</app-toolbar>
         <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
-          <a name="view1" href="/view1">View One</a>
-          <a name="view2" href="/view2">View Two</a>
-          <a name="view3" href="/view3">View Three</a>
-          <a name="repo" href="/repo/builds">Repo</a>
+          <a href="/account/">Account</a>
+          <a name="drone/drone" href="/drone/drone/">drone/drone</a>
+          <a href="/drone/drone/1/1">1</a>
+          <a name="drone-plugins/drone-s3" href="/drone-plugins/drone-s3/">drone-plugins-s3</a>
+          <a href="/drone-plugins/drone-s3/1/1">1</a>
         </iron-selector>
       </app-drawer>
 
@@ -95,16 +109,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         </app-header>
 
         <iron-pages role="main" selected="[[page]]" attr-for-selected="name">
-          <my-view1 name="view1"></my-view1>
-          <my-view2 name="view2"></my-view2>
-          <my-view3 name="view3"></my-view3>
-          <my-repo name="repo" route="{{subroute}}" data="{{routeData}}"></my-repo>
+          <drone-account-view name="account" route="{{accountRoute}}"></drone-account-view>
+          <drone-build-view name="build" route="{{buildRoute}}"></drone-build-view>
+          <drone-repo-view name="repo" route="{{buildRoute}}" data="[[repoData]]"></drone-repo-view>
         </iron-pages>
-
       </app-header-layout>
-
     </app-drawer-layout>
-
   </template>
 
   <script>
@@ -114,36 +124,40 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       is: 'my-app',
 
       properties: {
-
         page: {
           type: String,
           reflectToAttribute: true,
           observer: '_pageChanged'
-        },
-
+        }
       },
 
       attached: function() {
-        var api = new Drone('');
-        api.connect();
+        //var api = new Drone('');
+        //api.connect();
       },
 
       observers: [
-        '_routePageChanged(routeData.page)'
+        '_pickPage(repoActive, buildActive, accountActive)'
       ],
 
-      _routePageChanged: function(page) {
-        this.page = page || 'view1';
+      _pickPage: function(repo, build, account) {
+        var page;
+
+        if (account) {
+          page = 'account';
+        } else if (build) {
+          page = 'build';
+        } else {
+          page = 'repo';
+        }
+
+        this.page = page;
       },
 
       _pageChanged: function(page) {
         // load page import on demand.
-        this.importHref(
-          this.resolveUrl('my-' + page + '.html'), null, null, true);
+        this.importHref(this.resolveUrl('drone-' + page + '-view.html'), null, null, true);
       }
-
     });
-
   </script>
-
 </dom-module>

@@ -20,7 +20,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <link rel="import" href="drone-build-list.html">
 
-<dom-module id="my-repo">
+<dom-module id="drone-repo-view">
   <template>
     <style>
       :host {
@@ -37,6 +37,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
     </style>
     <app-route route="{{route}}" pattern="/:tabName" data="{{routeData}}"></app-route>
+
     <paper-tabs selected='{{routeData.tabName}}' attr-for-selected="name">
       <paper-tab name="builds">Builds</paper-tab>
       <paper-tab name="badges">Badges</paper-tab>
@@ -48,14 +49,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                          duration="10000"
                          attr-for-selected="name">
       <neon-animatable name="builds">
-        <drone-builds owner="drone" name="drone" models="{{builds}}"></drone-builds>
-        <iron-list id="builds" items='[[builds]]' as="build">
-          <template>
-            <a href="">
-              <drone-build-card model="[[build]]"></drone-build-card>
-            </a>
-          </template>
-        </iron-list>
+        <drone-build-list repo="[[repo]]"></drone-build-list>
       </neon-animatable>
       <neon-animatable name="badges">Badges page</neon-animatable>
       <neon-animatable name="settings">Settings page</neon-animatable>
@@ -64,7 +58,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
   <script>
     Polymer({
-      is: 'my-repo',
+      is: 'drone-repo-view',
       properties: {
         route: {
           type: Object,

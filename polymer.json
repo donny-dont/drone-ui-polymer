@@ -1,9 +1,9 @@
 {
   "entrypoint": "index.html",
-  "shell": "src/my-app.html",
+  "shell": "src/drone-app.html",
   "fragments": [
-    "src/my-view1.html",
-    "src/my-view2.html",
-    "src/my-view3.html"
+    "src/drone-account-view.html",
+    "src/drone-build-view.html",
+    "src/drone-repo-view.html"
   ]
 }

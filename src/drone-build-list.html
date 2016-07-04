@@ -27,6 +27,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         --paper-progress-active-color: #00BFA5;
         --paper-progress-container-color: #EEEEEE;
       }
+
+      drone-build-card {
+        border-bottom: 2px solid black;
+      }
     </style>
     <template id="progress" is="dom-if" if="[[loading]]">
       <paper-progress indeterminate></paper-progress>
