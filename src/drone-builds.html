@@ -21,12 +21,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     Polymer({
       is: 'drone-builds',
       properties: {
-        name: {
-          type: String
-        },
-        owner: {
-          type: String
-        },
+        owner: String,
+        name: String,
         models: {
           type: Array,
           notify: true,
@@ -34,13 +30,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }
       },
       observers: [
-        'subscribe(repo, owner)'
+        '_subscribe(owner, name)'
       ],
-      subscribe: function(repo, owner) {
-        console.log(repo);
-        console.log(owner);
-      },
-      attached: function() {
+      _subscribe: function(owner, name) {
         if (!this._drone) {
           this._drone = new Drone();
           this._drone.connect();
@@ -48,10 +40,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         if (this._subscription) {
           this._subscription.dispose();
+          this.set('models', []);
         }
 
         var that = this;
-        this._subscription = this._drone.getBuilds(this.owner, this.name).subscribe(
+        this._subscription = this._drone.getBuilds(owner, name).subscribe(
           function (value) {
             console.log(value.id);
             // See if the build is present
