@@ -21,7 +21,8 @@
     "iron-list": "PolymerElements/iron-list#^1.3.4",
     "iron-ajax": "PolymerElements/iron-ajax#^1.2.1",
     "rxjs": "^4.1.0",
-    "iron-icons": "PolymerElements/iron-icons#^1.1.3"
+    "iron-icons": "PolymerElements/iron-icons#^1.1.3",
+    "paper-progress": "PolymerElements/paper-progress#^1.0.9"
   },
   "devDependencies": {
     "web-component-tester": "^4.0.0"

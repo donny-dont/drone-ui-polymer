@@ -12,6 +12,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../bower_components/iron-list/iron-list.html">
+<link rel="import" href="../bower_components/paper-progress/paper-progress.html">
 
 <link rel="import" href="drone-build-card.html">
 <link rel="import" href="drone-builds.html">
@@ -20,10 +21,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <template>
     <style include="drone-theme">
       #progress {
-        @apply(--progress);
+        height: 0;
       }
 
       paper-progress {
+        @apply(--progress-area);
         --paper-progress-active-color: #00BFA5;
         --paper-progress-container-color: #EEEEEE;
       }
@@ -50,8 +52,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       properties: {
         repo: {
           type: Object
+        },
+        loading: {
+          type: Boolean,
+          value: true,
         }
       },
+      observers: [
+        '_buildsChanged(builds.splices)',
+      ],
+      _buildsChanged: function(_) {
+        console.log('Builds be changing');
+        this.loading = this.builds.length == 0;
+      }
     })
   </script>
 </dom-module>

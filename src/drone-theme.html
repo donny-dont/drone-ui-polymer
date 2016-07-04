@@ -1,7 +1,7 @@
 <dom-module id="drone-theme">
 	<template>
 		<style>
-			:root {
+			:host {
 				--build-failure-color: #F50057;
 				--build-success-color: #00BFA5;
 				--build-running-color: #FFA000;
@@ -14,12 +14,13 @@
 
 				--drone-border-color: #EEEEEE;
 
-				--progress-area {
+				--progress-area: {
 					position: absolute;
 					left: 0;
 					right: 0;
 					top: 0;
-				}
+					width: 100%;
+				};
 			}
 
 			::-webkit-input-placeholder {

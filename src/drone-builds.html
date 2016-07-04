@@ -40,7 +40,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         if (this._subscription) {
           this._subscription.dispose();
-          this.set('models', []);
+          this.splice('models', 0, this.models.length);
         }
 
         var that = this;
