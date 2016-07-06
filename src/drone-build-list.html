@@ -64,9 +64,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       _buildsChanged: function(_) {
         // Check for any changes to the array to determine loading
         this.loading = this.builds.length == 0;
+        // Notify iron-list
+        this.$.builds.fire('iron-resize');
       },
       _buildRoute: function(build) {
-        return '/' + this.repo.owner + '/' + this.repo.name + '/1/1';
+        return '/' + this.repo.owner + '/' + this.repo.name + '/' + build.number + '/1';
       },
     })
   </script>

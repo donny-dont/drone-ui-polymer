@@ -1,10 +1,20 @@
+
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
 <script>
+  /**
+   * @polymerBehavior
+   */
   ModelFeed = {
     properties: {
       models: {
-        type: Boolean,
+        type: Array,
         notify: true,
-        value: [],
+        value: []
+      },
+      uniqueKey: {
+        type: String,
+        value: 'id',
       },
     },
     attached: function() {
@@ -37,13 +47,18 @@
 
       this.subscription = this.getFeed().subscribe(
         function (value) {
+          console.log(that.tagName);
           // See if the value is present
-          var models = that.models;
-          var count = models.length;
-          var id = value.id;
+          var models = that.models,
+              count = models.length,
+              key = that.uniqueKey,
+              id = value[key];
+
+          console.log('Adding model ' + id);
+          console.log(models.length);
 
           for (var i = 0; i < count; ++i) {
-            if (models[i].id === id) {
+            if (models[i][key] === id) {
               console.log('Updating model at ' + i);
               that.set('models.' + i, value);
               return;
@@ -68,6 +83,7 @@
       }
 
       // Clear values
+      console.log('unsubscribe');
       this.splice('models', 0, this.models.length);
     },
     isReady: function() { return true; },

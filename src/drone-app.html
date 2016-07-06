@@ -23,16 +23,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="my-icons.html">
 
 <link rel="import" href="model/drone-api-mock.html">
-<link rel="import" href="model/drone-build-feed.html">
 <link rel="import" href="model/drone-repo-feed.html">
-<link rel="import" href="model/drone-repo-model.html">
 
-<dom-module id="my-app">
-
+<dom-module id="drone-app">
   <template>
-
     <style>
-
       :host {
         display: block;
         --app-primary-color: #4285f4;
@@ -64,8 +59,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       .drawer-list a.subroute {
         padding-left: 32px;
       }
-
-
     </style>
 
     <!-- Routing -->
@@ -103,7 +96,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <!-- Data connection -->
       <drone-api-mock></drone-api-mock>
       <drone-repo-feed></drone-repo-feed>
-      <drone-repo-model owner="drone" name="drone"></drone-repo-model>
 
       <!-- Main content -->
       <app-header-layout has-scrolling-region>
@@ -125,11 +117,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   </template>
 
   <script>
-
     Polymer({
-
-      is: 'my-app',
-
+      is: 'drone-app',
       properties: {
         page: {
           type: String,
@@ -137,16 +126,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           observer: '_pageChanged'
         }
       },
-
-      attached: function() {
-        //var api = new Drone('');
-        //api.connect();
-      },
-
       observers: [
         '_pickPage(repoActive, buildActive, accountActive)'
       ],
-
       _pickPage: function(repo, build, account) {
         var page;
 
@@ -160,7 +142,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         this.page = page;
       },
-
       _pageChanged: function(page) {
         // load page import on demand.
         this.importHref(this.resolveUrl('drone-' + page + '-view.html'), null, null, true);
