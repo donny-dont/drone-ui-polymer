@@ -36,7 +36,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     <content></content>
 
-    <drone-build-feed owner="[[repo.owner]]" name="[[repo.name]]" models="{{builds}}"></drone-build-feed>
+    <drone-build-feed repo="[[repo]]" models="{{builds}}"></drone-build-feed>
     <iron-list id="builds" items='[[builds]]' as="build">
       <template>
         <a href="[[_buildRoute(build)]]">

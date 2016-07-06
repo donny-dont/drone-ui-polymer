@@ -19,12 +19,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/paper-tabs/paper-tab.html">
 <link rel="import" href="../bower_components/paper-tabs/paper-tabs.html">
 
+<link rel="import" href="model/drone-repo-model.html">
 <link rel="import" href="drone-badges.html">
 <link rel="import" href="drone-build-list.html">
 
 <dom-module id="drone-repo-view">
   <template>
-    <style include="iron-flex">
+    <style>
       :host {
         @apply(--layout-vertical);
         @apply(--layout-flex);
@@ -45,7 +46,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         data="{{tabData}}"></app-route>
 
     <!-- Models -->
-    
+    <drone-repo-model inputs="[[repoData]]" model="{{repo}}"></drone-repo-model>
 
     <!-- View -->
     <paper-tabs selected='{{tabData.tabName}}' attr-for-selected="name">
@@ -59,7 +60,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                          duration="10000"
                          attr-for-selected="name">
       <neon-animatable name="">
-        <drone-build-list repo="[[repoData]]"></drone-build-list>
+        <drone-build-list repo="[[repo]]"></drone-build-list>
       </neon-animatable>
       <neon-animatable name="badges">
         <drone-badges></drone-badges>
@@ -76,8 +77,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           type: Object,
           notify: true
         },
-        repoData: Object,
-      }
+        repoData: Object
+      },
+      observers: [
+        '_repoDataChanged(repoData)',
+      ],
+      _repoDataChanged: function(value) {
+        console.log(this.tagName + ' Repo data changed');
+      },
     });
   </script>
 </dom-module>

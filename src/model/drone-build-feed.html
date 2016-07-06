@@ -22,20 +22,20 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     Polymer({
       is: 'drone-build-feed',
       properties: {
-        owner: String,
-        name: String,
+        repo: Object,
       },
       behaviors: [
         ModelFeed,
       ],
       observers: [
-        '_subscribe(owner, name)'
+        '_subscribe(repo)'
       ],
       isReady: function() {
-        return this.owner && this.name;
+        return this.repo;
       },
       getFeed: function() {
-        return this.connection.getBuilds(this.owner, this.name);
+        var repo = this.repo;
+        return this.connection.getBuilds(repo.owner, repo.name);
       },
       _subscribe: function(owner, name) {
         this.subscribe();

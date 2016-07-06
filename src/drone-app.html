@@ -125,11 +125,20 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           type: String,
           reflectToAttribute: true,
           observer: '_pageChanged'
-        }
+        },
+        repoData: {
+          type: Object,
+          notify: true,
+        },
       },
       observers: [
-        '_pickPage(repoActive, buildActive, accountActive)'
+        '_pickPage(repoActive, buildActive, accountActive)',
+        '_repoDataChanged(repoData)',
       ],
+      _repoDataChanged: function(repoData) {
+        console.log(this.tagName + ' Repo data changed');
+        console.log(repoData);
+      },
       _pickPage: function(repo, build, account) {
         var page;
 

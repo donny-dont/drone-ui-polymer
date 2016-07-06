@@ -25,7 +25,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         @apply(--layout-flex);
       }
     </style>
-    <drone-repo-model owner="drone" name="drone" model="{{repo}}"></drone-repo-model>
+    <drone-repo-model inputs="[[repoData]]" model="{{repo}}"></drone-repo-model>
     <drone-build-model repo="[[repo]]" number="555" model="{{build}}"></drone-build-model>
     <drone-log-feed repo="[[repo]]" build="[[build]]" job="1" models="{{logs}}"></drone-log-feed>
 
@@ -50,6 +50,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       _repoDataChanged: function(value) {
         console.log(this.tagName + ' Repo data changed');
         console.log(value);
+
+        this.$.pipeline.innerHTML = '';
       },
       _logsChanged: function(changes) {
 

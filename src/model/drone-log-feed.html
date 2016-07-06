@@ -37,17 +37,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         '_subscribe(repo, build, job)'
       ],
       isReady: function() {
-        console.log('isReady ' + this.tagName);
-        console.dir(this.repo);
-        console.dir(this.build);
-        console.log(this.job);
         // Will fail if job is ever 0
         return this.repo && this.build && this.job;
       },
       getFeed: function() {
-        console.log('Getting log feed');
         var repo = this.repo;
-        console.dir(repo);
+
         return this.connection.getBuildLogs(repo.owner, repo.name, this.build.number, this.job);
       },
       _subscribe: function(_, __, ___) {

@@ -32,13 +32,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         '_buildChanged(repo, number)',
       ],
       isReady: function() {
-        console.log('isReady ' + this.tagName);
-        console.dir(this.repo);
-        console.log(this.number);
         return this.repo && this.number;
       },
       getModel: function() {
-        console.log('Getting build model');
         var repo = this.repo;
 
         return this.connection.getBuild(repo.owner, repo.name, this.number);

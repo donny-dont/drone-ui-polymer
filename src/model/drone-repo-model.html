@@ -22,8 +22,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     Polymer({
       is: 'drone-repo-model',
       properties: {
-        owner: String,
-        name: String,
+        inputs: Object,
         model: {
           type: Object,
           notify: true,
@@ -33,15 +32,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         Model,
       ],
       observers: [
-        '_repoChanged(owner, name)',
+        '_repoChanged(inputs)',
       ],
       isReady: function() {
-        return this.owner && this.name;
+        return this.inputs;
       },
       getModel: function() {
-        return this.connection.getRepo(this.owner, this.name);
+        var inputs = this.inputs;
+        return this.connection.getRepo(inputs.owner, inputs.name);
       },
-      _repoChanged: function(owner, name) {
+      _repoChanged: function(inputs) {
+        console.log(this.tagName + ' repo changed');
+        console.log(inputs);
         this.fetch();
       },
     })
