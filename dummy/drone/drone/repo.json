@@ -1,0 +1,17 @@
+{
+   "id":4,
+   "owner":"drone",
+   "name":"drone",
+   "full_name":"drone/drone",
+   "avatar_url":"https://avatars.githubusercontent.com/u/2181346?v=3",
+   "link_url":"https://github.com/drone/drone",
+   "scm":"git",
+   "clone_url":"https://github.com/drone/drone.git",
+   "default_branch":"master",
+   "timeout":265,
+   "trusted":false,
+   "allow_pr":true,
+   "allow_push":true,
+   "allow_deploys":false,
+   "allow_tags":false
+}
