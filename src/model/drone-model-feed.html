@@ -1,0 +1,76 @@
+<script>
+  ModelFeed = {
+    properties: {
+      models: {
+        type: Boolean,
+        notify: true,
+        value: [],
+      },
+    },
+    attached: function() {
+      this.fire('register-connection', this);
+    },
+    connect: function(connection) {
+      console.log('Got connection');
+      this.connection = connection;
+      this.subscribe();
+    },
+    subscribe: function() {
+      // Sanity check
+      if (!this.connection) {
+        console.log('Oh boy this is bad');
+        var stack = new Error().stack;
+        console.dir(this);
+        console.log(stack);
+        return;
+      }
+
+      // Remove old subscription
+      this.unsubscribe();
+
+      if (!this.isReady()) {
+        return;
+      }
+
+      // Subscribe
+      var that = this;
+
+      this.subscription = this.getFeed().subscribe(
+        function (value) {
+          // See if the value is present
+          var models = that.models;
+          var count = models.length;
+          var id = value.id;
+
+          for (var i = 0; i < count; ++i) {
+            if (models[i].id === id) {
+              console.log('Updating model at ' + i);
+              that.set('models.' + i, value);
+              return;
+            }
+          }
+
+          that.unshift('models', value);
+        },
+        function (error) {
+          console.log('HAVE ERROR');
+          console.dir(error)
+
+          that.fire('model-error', {error: error});
+        }
+      );
+    },
+    unsubscribe: function() {
+      if (this._subscription) {
+        // Remove subscription
+        this._subscription.dispose();
+        this._subscription = null;
+      }
+
+      // Clear values
+      this.splice('models', 0, this.models.length);
+    },
+    isReady: function() { return true; },
+    getFeed: function() { return null; }
+  }
+</script>

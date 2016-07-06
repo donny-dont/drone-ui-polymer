@@ -1,0 +1,121 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<script src="../../bower_components/rxjs/dist/rx.lite.min.js"></script>
+
+<script>
+  DroneApi = function(token) {
+    this._token = token;
+    this._subjects = {};
+    this._repos = [];
+    this._repoSubject = new Rx.Subject();
+
+    DroneApi._getRepos(this);
+  };
+
+  DroneApi.prototype.getRepos = function() {
+    console.log('Get repos!');
+    return this._repoSubject;
+  };
+
+  DroneApi.prototype.getRepo = function(owner, name) {
+    console.log('Requesting repo ' + owner + ' ' + name);
+    // Currently assuming all reqpos are there and loaded
+    var repos = this._repos,
+        count = repos.length,
+        value;
+
+    for (var i = 0; i < count; ++i) {
+      value = repos[i];
+
+      if ((value.owner == owner) && (value.name == name)) {
+        return Promise.resolve(value);
+      }
+    }
+
+    return Promise.reject('Not found');
+  };
+
+  DroneApi.prototype.getBuilds = function(owner, name) {
+    var subject = new Rx.Subject();
+
+    DroneApi._requestMockStream('/dummy/' + owner + '/' + name + '/builds.json', subject, []);
+
+    return subject;
+  }
+
+  DroneApi._getRepos = function(api) {
+    DroneApi._requestMockStream('/dummy/repos.json', api._repoSubject, api._repos);
+  };
+
+  DroneApi._requestMockData = function(path) {
+    console.log('Requesting mock data from ' + path);
+    return fetch(path).then(
+      function(response) {
+        return response.json();
+      },
+      function(error) {
+        console.log('Error when fetching data at ' + path);
+        console.dir(error);
+      }
+    )
+  };
+
+  DroneApi._requestMockStream = function(path, subject, cache) {
+    DroneApi._requestMockData(path).then(
+      function (values) {
+        var count = values.length,
+            value, i;
+
+        console.log('Adding ' + count + ' objects');
+
+        for (i = count - 1; i >= 0; --i) {
+          value = values[i];
+
+          cache.push(value);
+          subject.onNext(value);
+        }
+      },
+      function (error) {
+        console.log('Error when parsing mock data');
+        console.dir(error);
+      }
+    )
+  };
+</script>
+
+<dom-module id="drone-api-mock">
+  <template>
+    <style>:host{ display: none}</style>
+  </template>
+  <script>
+    Polymer({
+      is: 'drone-api-mock',
+      properties: {
+        token: String
+      },
+      observers: [
+        '_tokenChanged(token)',
+      ],
+      created: function() {
+        this._connection = new DroneApi();
+        this._listener = _registerConnection(this);
+      },
+      attached: function() {
+        document.addEventListener('register-connection', this._listener);
+      },
+      detached: function() {
+        document.removeEventListener('register-connection', this._listener)
+      },
+      _tokenChanged: function(value) {
+
+      },
+    })
+
+    function _registerConnection(api) {
+      return function(event) {
+        console.log('Registering: ' + event.detail.tagName);
+        event.detail.connect(api._connection);
+      };
+    }
+  </script>
+</dom-module>

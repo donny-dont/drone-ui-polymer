@@ -1,0 +1,44 @@
+<script>
+  Model = {
+    properties: {
+      models: {
+        type: Boolean,
+        notify: true,
+        value: [],
+      },
+    },
+    attached: function() {
+      this.fire('register-connection', this);
+    },
+    connect: function(connection) {
+      this.connection = connection;
+      this.fetch();
+    },
+    fetch: function() {
+      if (!this.connection) {
+        console.log('No connection');
+        return;
+      }
+
+      if (!this.isReady()) {
+        return;
+      }
+
+      var that = this;
+
+      this.getModel().then(
+        function (value) {
+          console.log('Got model!');
+          console.dir(value);
+          that.set('model', value);
+        },
+        function (error) {
+          console.log('Error getting model');
+          console.dir(error);
+        }
+      )
+    },
+    isReady: function() { return true; },
+    getModel: function() {}
+  }
+</script>
