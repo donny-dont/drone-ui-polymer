@@ -38,20 +38,28 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         padding: 40px 30px;
       }
     </style>
-    <app-route route="{{route}}" pattern="/:tabName" data="{{routeData}}"></app-route>
+    <!-- Routes -->
+    <app-route
+        route="{{route}}"
+        pattern="/:tabName"
+        data="{{tabData}}"></app-route>
 
-    <paper-tabs selected='{{routeData.tabName}}' attr-for-selected="name">
+    <!-- Models -->
+    
+
+    <!-- View -->
+    <paper-tabs selected='{{tabData.tabName}}' attr-for-selected="name">
       <paper-tab name="">Builds</paper-tab>
       <paper-tab name="badges">Badges</paper-tab>
       <paper-tab name="settings">Settings</paper-tab>
     </paper-tabs>
-    <neon-animated-pages selected="[[routeData.tabName]]"
+    <neon-animated-pages selected="[[tabData.tabName]]"
                          entry-animation="fade-in-animation"
                          exit-animation="fade-out-animation"
                          duration="10000"
                          attr-for-selected="name">
       <neon-animatable name="">
-        <drone-build-list repo="[[repo]]"></drone-build-list>
+        <drone-build-list repo="[[repoData]]"></drone-build-list>
       </neon-animatable>
       <neon-animatable name="badges">
         <drone-badges></drone-badges>
@@ -68,10 +76,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           type: Object,
           notify: true
         },
-        repo: {
-          type: Object,
-          notify: true
-        },
+        repoData: Object,
       }
     });
   </script>

@@ -37,13 +37,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       is: 'drone-build-view',
       properties: {
         job: Number,
+        repoData: Object,
       },
       observers: [
         '_buildChanged(build)',
         '_logsChanged(logs.splices)',
+        '_repoDataChanged(repoData)',
       ],
       _buildChanged: function(value) {
 
+      },
+      _repoDataChanged: function(value) {
+        console.log(this.tagName + ' Repo data changed');
+        console.log(value);
       },
       _logsChanged: function(changes) {
 
@@ -67,7 +73,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         if (proc) {
           target = pipeline.querySelector('#' + proc);
-          console.dir(pipeline);
 
           if (!target) {
             console.log('Found new output');
