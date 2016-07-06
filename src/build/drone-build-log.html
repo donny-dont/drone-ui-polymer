@@ -1,0 +1,129 @@
+<!--
+@license
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+
+<dom-module id="drone-build-log">
+  <template>
+    <style>
+      :host {
+        @apply(--layout-vertical);
+        @apply(--layout-flex);
+      }
+
+      #header {
+        @apply(--layout-horizontal);
+      }
+
+      #name {
+        @apply(--layout-flex);
+      }
+
+      #logs {
+        @apply(--layout-vertical);
+      }
+
+      .line {
+        font-family: 'Roboto Mono', monospace;
+        @apply(--layout-horizontal);
+      }
+
+      .line-meta {
+        @apply(--layout-horizontal);
+        @apply(--layout-top);
+        padding-right: 10px;
+        border-right: 1px solid black;
+        width: 50px;
+      }
+
+      .line-expand {
+        width: 25px;
+      }
+
+      .line-number {
+        @apply(--layout-flex);
+        text-align: right;
+      }
+    </style>
+
+    <div id="header">
+      <div id="name">[[name]]</div>
+      <div>Download Log</div>
+    </div>
+    <div id="log">
+    </div>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'drone-build-log',
+      properties: {
+        name: String,
+        lines: {
+          type: Array,
+          value: [],
+        },
+        commandCharacter: {
+          type: String,
+          value: '+',
+        },
+      },
+      addLine: function(line) {
+        var lines = this.lines,
+            count = lines.length,
+            pos = line.pos,
+            add = true,//count === pos + 1,
+            lineElement, collapseElement, outputElement;
+
+        // Currently assuming that lines always come in in order
+        if (add) {
+          lines.push(line);
+
+          lineElement = document.createElement('div');
+          lineElement.className = 'line';
+
+          // Create meta area
+          var metaElement = document.createElement('div');
+          metaElement.className = 'line-meta';
+
+          collapseElement = document.createElement('div');
+          collapseElement.className = 'line-expand';
+
+          var positionElement = document.createElement('div');
+          positionElement.className = 'line-number';
+          positionElement.innerText = pos;
+
+          metaElement.appendChild(collapseElement);
+          metaElement.appendChild(positionElement);
+
+          // Create the output area
+          outputElement = document.createElement('div');
+          outputElement.className = 'line-output';
+
+          lineElement.appendChild(metaElement);
+          lineElement.appendChild(outputElement);
+        } else {
+          // Reuse
+          lineElement = this.$.log.childNodes[pos];
+          collapseElement = lineElement.querySelector('.line-expand');
+          outputElement = lineElement.querySelector('.line-output');
+        }
+
+        outputElement.innerText = line.out || '';
+
+        if (add) {
+          this.$.log.appendChild(lineElement);
+        }
+      },
+    });
+  </script>
+</dom-module>

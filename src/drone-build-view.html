@@ -10,15 +10,78 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <link rel="import" href="../bower_components/polymer/polymer.html">
 
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
+
+<link rel="import" href="build/drone-build-log.html">
+<link rel="import" href="model/drone-build-model.html">
+<link rel="import" href="model/drone-log-feed.html">
+<link rel="import" href="model/drone-repo-model.html">
+
 <dom-module id="drone-build-view">
   <template>
-    <style></style>
+    <style>
+      :host {
+        @apply(--layout-vertical);
+        @apply(--layout-flex);
+      }
+    </style>
+    <drone-repo-model owner="drone" name="drone" model="{{repo}}"></drone-repo-model>
+    <drone-build-model repo="[[repo]]" number="555" model="{{build}}"></drone-build-model>
+    <drone-log-feed repo="[[repo]]" build="[[build]]" job="1" models="{{logs}}"></drone-log-feed>
 
+    <div id="pipeline"></div>
   </template>
 
   <script>
     Polymer({
       is: 'drone-build-view',
+      properties: {
+        job: Number,
+      },
+      observers: [
+        '_buildChanged(build)',
+        '_logsChanged(logs.splices)',
+      ],
+      _buildChanged: function(value) {
+
+      },
+      _logsChanged: function(changes) {
+
+        if (!changes) {
+          return;
+        }
+
+        if (this.logs.length === 0) {
+          // todo remove all nodes in a loop
+          this.$.pipeline.innerHTML = '';
+          return;
+        }
+
+        var splices = changes.indexSplices;
+
+        var i = splices[0].index,
+            line = this.logs[i],
+            proc = line.proc,
+            pipeline = this.$.pipeline,
+            target;
+
+        if (proc) {
+          target = pipeline.querySelector('#' + proc);
+          console.dir(pipeline);
+
+          if (!target) {
+            console.log('Found new output');
+            target = document.createElement('drone-build-log');
+            target.name = proc;
+            target.id = proc;
+
+            pipeline.appendChild(target);
+          }
+
+          target.addLine(line);
+        }
+
+      },
     })
   </script>
 </dom-module>
