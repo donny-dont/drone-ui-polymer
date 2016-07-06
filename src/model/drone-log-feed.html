@@ -12,7 +12,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <link rel="import" href="drone-model-feed.html">
 
-<dom-module id="drone-build-feed">
+<dom-module id="drone-log-feed">
   <template>
     <style>
       :host { display: none; }
@@ -20,24 +20,37 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   </template>
   <script>
     Polymer({
-      is: 'drone-build-feed',
+      is: 'drone-log-feed',
       properties: {
-        owner: String,
-        name: String,
+        repo: Object,
+        build: Object,
+        job: Number,
+        uniqueKey: {
+          type: String,
+          value: '',
+        }
       },
       behaviors: [
         ModelFeed,
       ],
       observers: [
-        '_subscribe(owner, name)'
+        '_subscribe(repo, build, job)'
       ],
       isReady: function() {
-        return this.owner && this.name;
+        console.log('isReady ' + this.tagName);
+        console.dir(this.repo);
+        console.dir(this.build);
+        console.log(this.job);
+        // Will fail if job is ever 0
+        return this.repo && this.build && this.job;
       },
       getFeed: function() {
-        return this.connection.getBuilds(this.owner, this.name);
+        console.log('Getting log feed');
+        var repo = this.repo;
+        console.dir(repo);
+        return this.connection.getBuildLogs(repo.owner, repo.name, this.build.number, this.job);
       },
-      _subscribe: function(owner, name) {
+      _subscribe: function(_, __, ___) {
         this.subscribe();
       }
     })

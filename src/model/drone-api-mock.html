@@ -32,19 +32,39 @@
       }
     }
 
-    return Promise.reject('Not found');
+    var path = owner + '/' + name;
+
+    return DroneApi._requestMockData('/dummy/' + path + '/repo.json');
   };
+
+  DroneApi.prototype.getBuildLogs = function(owner, name, build, job) {
+    var path = owner + '/' + name + '/' + build + '/' + job;
+    console.log('Requesting ' + path);
+
+    var subject = new Rx.Subject();
+
+    DroneApi._requestMockStream('/dummy/' + path + '/logs.json', subject, [], false);
+
+    return subject;
+  }
+
+  DroneApi.prototype.getBuild = function(owner, name, number) {
+    var path = owner + '/' + name + '/' + number;
+    console.log('Requesting + ' + path);
+
+    return DroneApi._requestMockData('/dummy/' + path + '/build.json');
+  }
 
   DroneApi.prototype.getBuilds = function(owner, name) {
     var subject = new Rx.Subject();
 
-    DroneApi._requestMockStream('/dummy/' + owner + '/' + name + '/builds.json', subject, []);
+    DroneApi._requestMockStream('/dummy/' + owner + '/' + name + '/builds.json', subject, [], true);
 
     return subject;
   }
 
   DroneApi._getRepos = function(api) {
-    DroneApi._requestMockStream('/dummy/repos.json', api._repoSubject, api._repos);
+    DroneApi._requestMockStream('/dummy/repos.json', api._repoSubject, api._repos, true);
   };
 
   DroneApi._requestMockData = function(path) {
@@ -60,7 +80,7 @@
     )
   };
 
-  DroneApi._requestMockStream = function(path, subject, cache) {
+  DroneApi._requestMockStream = function(path, subject, cache, reverse) {
     DroneApi._requestMockData(path).then(
       function (values) {
         var count = values.length,
@@ -68,11 +88,20 @@
 
         console.log('Adding ' + count + ' objects');
 
-        for (i = count - 1; i >= 0; --i) {
-          value = values[i];
+        if (reverse) {
+          for (i = count - 1; i >= 0; --i) {
+            value = values[i];
 
-          cache.push(value);
-          subject.onNext(value);
+            cache.push(value);
+            subject.onNext(value);
+          }
+        } else {
+          for (i = 0; i < count; ++i) {
+            value = values[i];
+            
+            cache.push(value);
+            subject.onNext(value);
+          }
         }
       },
       function (error) {

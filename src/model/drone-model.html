@@ -1,10 +1,12 @@
 <script>
+  /**
+   * @polymerBehavior
+   */
   Model = {
     properties: {
-      models: {
-        type: Boolean,
+      model: {
+        type: Object,
         notify: true,
-        value: [],
       },
     },
     attached: function() {
@@ -28,7 +30,7 @@
 
       this.getModel().then(
         function (value) {
-          console.log('Got model!');
+          console.log('Got model! ' + that.tagName);
           console.dir(value);
           that.set('model', value);
         },

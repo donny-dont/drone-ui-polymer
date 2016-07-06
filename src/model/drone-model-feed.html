@@ -51,26 +51,21 @@
           // See if the value is present
           var models = that.models,
               count = models.length,
-              key = that.uniqueKey,
-              id = value[key];
+              key = that.uniqueKey;
 
-          console.log('Adding model ' + id);
-          console.log(models.length);
-
-          for (var i = 0; i < count; ++i) {
-            if (models[i][key] === id) {
-              console.log('Updating model at ' + i);
-              that.set('models.' + i, value);
-              return;
+          if (key.length > 0) {
+            var id = value[key]
+            for (var i = 0; i < count; ++i) {
+              if (models[i][key] === id) {
+                that.set('models.' + i, value);
+                return;
+              }
             }
           }
 
           that.unshift('models', value);
         },
         function (error) {
-          console.log('HAVE ERROR');
-          console.dir(error)
-
           that.fire('model-error', {error: error});
         }
       );

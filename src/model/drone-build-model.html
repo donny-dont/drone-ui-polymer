@@ -10,9 +10,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
-<link rel="import" href="drone-model-feed.html">
+<link rel="import" href="drone-model.html">
 
-<dom-module id="drone-build-feed">
+<dom-module id="drone-build-model">
   <template>
     <style>
       :host { display: none; }
@@ -20,26 +20,32 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   </template>
   <script>
     Polymer({
-      is: 'drone-build-feed',
+      is: 'drone-build-model',
       properties: {
-        owner: String,
-        name: String,
+        repo: Object,
+        number: Number,
       },
       behaviors: [
-        ModelFeed,
+        Model,
       ],
       observers: [
-        '_subscribe(owner, name)'
+        '_buildChanged(repo, number)',
       ],
       isReady: function() {
-        return this.owner && this.name;
+        console.log('isReady ' + this.tagName);
+        console.dir(this.repo);
+        console.log(this.number);
+        return this.repo && this.number;
       },
-      getFeed: function() {
-        return this.connection.getBuilds(this.owner, this.name);
+      getModel: function() {
+        console.log('Getting build model');
+        var repo = this.repo;
+
+        return this.connection.getBuild(repo.owner, repo.name, this.number);
       },
-      _subscribe: function(owner, name) {
-        this.subscribe();
-      }
+      _buildChanged: function(owner, name) {
+        this.fetch();
+      },
     })
   </script>
 </dom-module>
