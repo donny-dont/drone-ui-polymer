@@ -22,6 +22,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="drone-api.html">
 <link rel="import" href="my-icons.html">
 
+<link rel="import" href="model/drone-api-mock.html">
+<link rel="import" href="model/drone-build-feed.html">
+<link rel="import" href="model/drone-repo-feed.html">
+<link rel="import" href="model/drone-repo-model.html">
+
 <dom-module id="my-app">
 
   <template>
@@ -91,11 +96,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <iron-selector selected="[[page]]" attr-for-selected="name" class="drawer-list" role="navigation">
           <a href="/account/">Account</a>
           <a name="drone/drone" href="/drone/drone/">drone/drone</a>
-          <a href="/drone/drone/1/1">1</a>
           <a name="drone-plugins/drone-s3" href="/drone-plugins/drone-s3/">drone-plugins-s3</a>
-          <a href="/drone-plugins/drone-s3/1/1">1</a>
         </iron-selector>
       </app-drawer>
+
+      <!-- Data connection -->
+      <drone-api-mock></drone-api-mock>
+      <drone-repo-feed></drone-repo-feed>
+      <drone-repo-model owner="drone" name="drone"></drone-repo-model>
 
       <!-- Main content -->
       <app-header-layout has-scrolling-region>

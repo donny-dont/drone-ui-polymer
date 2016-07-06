@@ -15,7 +15,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/paper-progress/paper-progress.html">
 
 <link rel="import" href="drone-build-card.html">
-<link rel="import" href="drone-builds.html">
+<link rel="import" href="model/drone-build-feed.html">
 
 <dom-module id="drone-build-list">
   <template>
@@ -36,10 +36,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     <content></content>
 
-    <drone-builds owner="[[repo.owner]]" name="[[repo.name]]" models="{{builds}}"></drone-builds>
+    <drone-build-feed owner="[[repo.owner]]" name="[[repo.name]]" models="{{builds}}"></drone-build-feed>
     <iron-list id="builds" items='[[builds]]' as="build">
       <template>
-        <a href="">
+        <a href="[[_buildRoute(build)]]">
           <drone-build-card model="[[build]]"></drone-build-card>
         </a>
       </template>
@@ -62,9 +62,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         '_buildsChanged(builds.splices)',
       ],
       _buildsChanged: function(_) {
-        console.log('Builds be changing');
+        // Check for any changes to the array to determine loading
         this.loading = this.builds.length == 0;
-      }
+      },
+      _buildRoute: function(build) {
+        return '/' + this.repo.owner + '/' + this.repo.name + '/1/1';
+      },
     })
   </script>
 </dom-module>
