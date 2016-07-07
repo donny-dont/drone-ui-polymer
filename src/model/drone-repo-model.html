@@ -41,6 +41,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         var inputs = this.inputs;
         return this.connection.getRepo(inputs.owner, inputs.name);
       },
+      hasChanged: function(value, oldValue) {
+        if (Model.hasChanged.call(this, value, oldValue)) {
+          return true;
+        }
+
+        return oldValue.full_name !== value.full_name;
+      },
       _repoChanged: function(inputs) {
         console.log(this.tagName + ' repo changed');
         console.log(inputs);

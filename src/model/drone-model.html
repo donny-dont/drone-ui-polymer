@@ -32,7 +32,12 @@
         function (value) {
           console.log('Got model! ' + that.tagName);
           console.dir(value);
-          that.set('model', value);
+
+          if (that.hasChanged(value, that.model)) {
+            that.set('model', value);
+          } else {
+            console.log('Value has not changed');
+          }
         },
         function (error) {
           console.log('Error getting model');
@@ -41,6 +46,13 @@
       )
     },
     isReady: function() { return true; },
-    getModel: function() {}
+    getModel: function() {},
+    hasChanged: function(value, oldValue) {
+      if (!oldValue) {
+        return true;
+      }
+
+      return value !== oldValue;
+    },
   }
 </script>
