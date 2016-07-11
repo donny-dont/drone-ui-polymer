@@ -10,6 +10,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
+<link rel="import" href="../../bower_components/iron-collapse/iron-collapse.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
 
 <dom-module id="drone-build-log">
@@ -17,11 +18,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <style>
       :host {
         @apply(--layout-vertical);
-        @apply(--layout-flex);
       }
 
       #header {
         @apply(--layout-horizontal);
+        padding: 10px 12px;
+        background-color: darkgray;
+      }
+
+      #collapse {
+        width: 100px;
+        height: 50px;
+        background-color: red;
       }
 
       #name {
@@ -53,14 +61,35 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         @apply(--layout-flex);
         text-align: right;
       }
+
+      .line-output {
+        @apply(--layout-flex);
+
+        position: relative;
+
+        overflow-wrap: break-word;
+        word-break: break-all;
+      }
+
+      .command {
+        background-color: red;
+      }
+
+      .elapsed {
+        float: right;
+        background-color: blue;
+        width: 100px;
+        height: 15px;
+      }
     </style>
 
     <div id="header">
+      <div id="collapse" on-click="toggleLog"></div>
       <div id="name">[[name]]</div>
       <div>Download Log</div>
     </div>
-    <div id="log">
-    </div>
+    <iron-collapse id="log" no-animation>
+    </iron-collapse>
   </template>
 
   <script>
@@ -70,7 +99,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         name: String,
         lines: {
           type: Array,
-          value: [],
+          value: []
         },
         commandCharacter: {
           type: String,
@@ -82,7 +111,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             count = lines.length,
             pos = line.pos,
             add = true,//count === pos + 1,
-            lineElement, collapseElement, outputElement;
+            output = line.out || '',
+            lineElement, collapseElement, outputElement, timeElement;
 
         // Currently assuming that lines always come in in order
         if (add) {
@@ -118,11 +148,27 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           outputElement = lineElement.querySelector('.line-output');
         }
 
-        outputElement.innerText = line.out || '';
+        outputElement.innerText = output;
+
+        if (this._isCommand(output)) {
+          lineElement.className += ' command';
+
+          // Create time
+          timeElement = document.createElement('div');
+          timeElement.className = 'elapsed';
+
+          outputElement.insertBefore(timeElement, outputElement.firstChild);
+        }
 
         if (add) {
-          this.$.log.appendChild(lineElement);
+          Polymer.dom(this.$.log).appendChild(lineElement);
         }
+      },
+      toggleLog: function() {
+        this.$.log.toggle();
+      },
+      _isCommand: function(value) {
+        return value.startsWith(this.commandCharacter);
       },
     });
   </script>
