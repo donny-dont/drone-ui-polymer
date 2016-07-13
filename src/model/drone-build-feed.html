@@ -22,7 +22,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     Polymer({
       is: 'drone-build-feed',
       properties: {
-        repo: Object,
+        repo: {
+          type: Object,
+          value: function() { return {}; }
+        }
       },
       behaviors: [
         ModelFeed,

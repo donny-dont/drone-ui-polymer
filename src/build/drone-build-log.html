@@ -99,7 +99,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         name: String,
         lines: {
           type: Array,
-          value: []
+          value: function() { return []; }
         },
         commandCharacter: {
           type: String,
@@ -108,61 +108,136 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       },
       addLine: function(line) {
         var lines = this.lines,
-            count = lines.length,
             pos = line.pos,
-            add = true,//count === pos + 1,
             output = line.out || '',
-            lineElement, collapseElement, outputElement, timeElement;
+            lineElement, collapseElement, outputElement, timeElement,
+            addTo, lastCommand, lastElement;
+
+        // Determine if the line is a command
+        line.isCommand = this._isCommand(output);
+
+        // Set the time to default if not present
+        line.time = line.time || 0;
+
+        // Get the last command seen
+        lastCommand = this._lastCommand();
+
+        if (line.isCommand) {
+          // Get the div representing the last command
+          //
+          // Search through the log
+          if (lastCommand !== -1) {
+            lastElement = Polymer.dom(this.$.log).lastChild;
+
+            while (true) {
+              if (lastElement.tagName === 'DIV') {
+                break;
+              }
+
+              lastElement = lastElement.previousSibling;
+            }
+
+            console.log('Testing ' + (line.time - lines[lastCommand].time));
+          }
+
+          // Should always add a command to the root container
+          addTo = Polymer.dom(this.$.log);
+        } else {
+          // A collapse should be used if the last line was a command
+          if (lastCommand == -1) {
+            addTo = Polymer.dom(this.$.log);
+          } else if (lastCommand === pos - 1) {
+            addTo = document.createElement('iron-collapse');
+            addTo.noAnimation = true;
+
+            // Set event listener
+            _collapse(Polymer.dom(this.$.log).lastChild, addTo);
+
+            Polymer.dom(this.$.log).appendChild(addTo);
+          } else {
+            addTo = Polymer.dom(this.$.log).lastChild;
+
+            console.log('Adding to ' + addTo.tagName);
+          }
+        }
 
         // Currently assuming that lines always come in in order
-        if (add) {
-          lines.push(line);
+        lineElement = document.createElement('div');
+        lineElement.className = 'line';
 
-          lineElement = document.createElement('div');
-          lineElement.className = 'line';
+        // Create meta area
+        var metaElement = document.createElement('div');
+        metaElement.className = 'line-meta';
 
-          // Create meta area
-          var metaElement = document.createElement('div');
-          metaElement.className = 'line-meta';
+        collapseElement = document.createElement('div');
+        collapseElement.className = 'line-expand';
 
-          collapseElement = document.createElement('div');
-          collapseElement.className = 'line-expand';
+        var positionElement = document.createElement('div');
+        positionElement.className = 'line-number';
+        positionElement.innerText = pos;
 
-          var positionElement = document.createElement('div');
-          positionElement.className = 'line-number';
-          positionElement.innerText = pos;
+        metaElement.appendChild(collapseElement);
+        metaElement.appendChild(positionElement);
 
-          metaElement.appendChild(collapseElement);
-          metaElement.appendChild(positionElement);
+        // Create the output area
+        outputElement = document.createElement('div');
+        outputElement.className = 'line-output';
 
-          // Create the output area
-          outputElement = document.createElement('div');
-          outputElement.className = 'line-output';
-
-          lineElement.appendChild(metaElement);
-          lineElement.appendChild(outputElement);
-        } else {
-          // Reuse
-          lineElement = this.$.log.childNodes[pos];
-          collapseElement = lineElement.querySelector('.line-expand');
-          outputElement = lineElement.querySelector('.line-output');
-        }
+        lineElement.appendChild(metaElement);
+        lineElement.appendChild(outputElement);
 
         outputElement.innerText = output;
 
+        /*
+        // Get the last command
+        lastCommand = this._lastCommand();
+
         if (this._isCommand(output)) {
           lineElement.className += ' command';
+          line.isCommand = true;
+
+          if (lastCommand !== -1) {
+            console.log(line.time - this.lines[lastCommand].time);
+
+            var last = Polymer.dom(this.$.log).lastChild;
+
+            while (true) {
+              if (last.className.endsWith('command')) {
+                break;
+              }
+
+              last = last.previousSibling;
+            }
+
+            last.querySelector('.elapsed').innerText = line.time - this.lines[lastCommand].time;
+          }
 
           // Create time
           timeElement = document.createElement('div');
           timeElement.className = 'elapsed';
 
           outputElement.insertBefore(timeElement, outputElement.firstChild);
-        }
+          addTo = Polymer.dom(this.$.log);
+        } else {
+          if ((lastCommand >= 0) && (lastCommand == this.lines.length - 1)) {
+            addTo = document.createElement('iron-collapse');
+            addTo.noAnimation = true;
 
-        if (add) {
-          Polymer.dom(this.$.log).appendChild(lineElement);
+            _collapse(Polymer.dom(this.$.log).lastChild, addTo);
+
+            Polymer.dom(this.$.log).appendChild(addTo);
+          } else {
+            if (lastCommand === -1) {
+              addTo = Polymer.dom(this.$.log);
+            } else {
+              addTo = Polymer.dom(this.$.log).lastChild;
+            }
+          }
         }
+        */
+
+        lines.push(line);
+        addTo.appendChild(lineElement);
       },
       toggleLog: function() {
         this.$.log.toggle();
@@ -170,6 +245,25 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       _isCommand: function(value) {
         return value.startsWith(this.commandCharacter);
       },
+      _lastCommand: function() {
+        var lines = this.lines,
+            count = lines.length,
+            i;
+
+        for (i = count - 1; i >= 0; --i) {
+          if (lines[i].isCommand) {
+            return i;
+          }
+        }
+
+        return -1;
+      },
     });
+
+    function _collapse(line, collapse) {
+      line.addEventListener('click', function () {
+        collapse.toggle();
+      }, false);
+    }
   </script>
 </dom-module>

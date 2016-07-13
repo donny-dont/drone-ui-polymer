@@ -7,7 +7,8 @@
       model: {
         type: Object,
         notify: true,
-      },
+        value: function() { return null; }
+      }
     },
     attached: function() {
       this.fire('register-connection', this);

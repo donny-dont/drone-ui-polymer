@@ -22,8 +22,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     Polymer({
       is: 'drone-log-feed',
       properties: {
-        repo: Object,
-        build: Object,
+        repo: {
+          type: Object,
+          value: function() { return {}; }
+        },
+        build: {
+          type: Object,
+          value: function() { return {}; }
+        },
         job: Number,
         uniqueKey: {
           type: String,
